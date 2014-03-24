@@ -29,6 +29,9 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/user/:id/json', user.get_json);
+app.get('/user/:id/csv', user.get_csv);
+app.get('/user/:id/stats_csv', user.get_stats_csv);
 app.get('/user/:id', user.get);
 
 http.createServer(app).listen(app.get('port'), function(){

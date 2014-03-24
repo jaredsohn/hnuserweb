@@ -2,7 +2,8 @@ extends layout
 
 block content
   h1= title
-  p Comment karma: #{data.comment_karma}
-  p Story karma: #{data.story_karma}
+  p Comments: #{data.comment_karma}, #{data.comment_count} karma
+  p Stories: #{data.story_karma}, #{data.comment_count} karma
+  p % comment karma: #{data.comment_karma_percent}
 
-  p Raw data #{raw}
+  <a href="#{data.author}/csv/">Download CSV</a>&nbsp;&nbsp;<a href="#{data.author}/stats_csv/">Download Metadata CSV</a>&nbsp;&nbsp;<a href="#{data.author}/json/">Download JSON</a>
