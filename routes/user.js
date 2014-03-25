@@ -10,7 +10,6 @@ exports.get = function(req, res)
 	hnuser.hnuser(id, function(results)
 	{
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
-
 		res.render('user_get', {
 			title: results.author,
 			data: results			
@@ -26,9 +25,22 @@ exports.get_json = function(req, res)
 	{
 		res.setHeader('Content-disposition', 'attachment; filename=' + id + ".json");
 		res.setHeader('Content-type', 'application/json');
-		res.render('user_get_blob', {
-			blob: JSON.stringify(results)
-		});
+		res.jsonp(results);
+	});
+}
+
+// Redundant if user gets full JSON.  (But for CSV, each provides unique content.)
+exports.get_stats_json = function(req, res)
+{
+	var id = req.params.id;
+	var hnuser = require('hnuser');
+	hnuser.hnuser(id, function(results)
+	{
+		delete results.hits; // Don't send all of that data as bandwidth
+
+		res.setHeader('Content-disposition', 'attachment; filename=stats_' + id + ".json");
+		res.setHeader('Content-type', 'application/json');
+		res.jsonp(JSON.stringify(results));
 	});
 }
 
@@ -42,10 +54,7 @@ exports.get_csv = function(req, res)
 		{
 			res.setHeader('Content-type', 'text/csv');
 			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-
-			res.render('user_get_blob', {
-				blob: contents
-			});
+			res.jsonp(contents);
 		});
 	});
 }
@@ -60,10 +69,7 @@ exports.get_stats_csv = function(req, res)
 		{
 			res.setHeader('Content-type', 'text/csv');
 			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-
-			res.render('user_get_blob', {
-				blob: contents
-			});
+			res.jsonp(contents);
 		});
 	});
 }

@@ -8,6 +8,8 @@
   "dependencies": {
     "express": "^3.4.4",
     "jade": "*",
-    "hnuser": "^0.1.1"
+    "hnuser": "^0.1.1",
+    "connect": "^2.14.3",
+    "connect-slashes": "^1.2.0"
   }
 }
