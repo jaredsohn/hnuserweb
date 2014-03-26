@@ -10,6 +10,7 @@
     "jade": "*",
     "hnuser": "^0.1.1",
     "connect": "^2.14.3",
-    "connect-slashes": "^1.2.0"
+    "connect-slashes": "^1.2.0",
+    "memjs": "^0.8.4"
   }
 }
