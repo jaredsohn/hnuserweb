@@ -9,17 +9,22 @@ var memjs_client = memjs.Client.create();
 var hnuser_wrapper = function(id, callback)
 {
 	memjs_client.get(id, function(err,val,key) {
-		if ((err !== null) && (val !== null))
+		if ((err === null) && (val !== null))
 		{
-			console.log("found in cache!");
-			callback(JSON.parse(val));
+			console.log(id + " - found in cache!");
+			callback(JSON.parse(val.toString()));
 		} else
 		{
-			console.log("NOT found in cache");
+			console.log(id + " - NOT found in cache");
 			var hnuser = require('hnuser');
 			hnuser.hnuser(id, function(results) {
-				if (!err) // TODO: assuming that err means that memcached isn't working at all
+				console.log("err = ");
+				console.log(err);
+				if (!err)
+				{ // TODO: assuming that err means that memcached isn't working at all
+					console.log("writing to cache '" + id + "'");
 					memjs_client.set(id, JSON.stringify(results));
+				}
 				callback(results);
 			});
 		}
