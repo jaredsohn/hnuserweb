@@ -2,8 +2,8 @@ extends layout
 
 block content
   h1= title 
-  p Comments: #{data.comment_karma}, #{data.comment_count} karma
-  p Stories: #{data.story_karma}, #{data.comment_count} karma
-  p % comment karma: #{data.comment_karma_percent} #{data.author}
+  p Comments: #{data.comment_count}, #{data.comment_karma} karma
+  p Stories: #{data.story_count}, #{data.story_karma} karma
+  p % comment karma: #{data.comment_karma_percent}
 
   <a href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a href="./json/" download>Download JSON</a>
