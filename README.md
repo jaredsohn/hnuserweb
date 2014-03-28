@@ -4,5 +4,4 @@ A website for downloading Hacker News comments/submissions and viewing user stat
 
 The current version (this is still beta) can be found at 
 
-	http://hnuser.herokuapp.com/.
-
+http://hnuser.herokuapp.com/
