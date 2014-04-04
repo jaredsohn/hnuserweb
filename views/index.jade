@@ -1,9 +1,14 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title} BETA
+  h1 hnuser BETA
+  p This site is a web interface to the hnuser npm module.  Still in BETA.
   p
   p Download your Hacker News comments and stories and get user statistics.
+  p  
+  p <b>Usage:</b>
   p
-  p Usage: http://hnuser.herokuapp.com/user/[username]
+  p    Web view: http://hnuser.herokuapp.com/user/[username]
+  p    Add /json, /csv or /stats_csv to the above URL to download that user's articles/stories in different formats.
+  p
+  p There is also a <a href="https://chrome.google.com/webstore/detail/hacker-news-karma-breakdo/mffigdmfbplhmdmbgncgncndjngcdlni">Chrome extension</a> that overlays comment/story karma on the Hacker News user page.
