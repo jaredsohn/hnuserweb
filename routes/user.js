@@ -35,16 +35,42 @@ var hnuser_wrapper = function(id, callback)
 exports.get = function(req, res)
 {
 	var id = req.params.id;
+	var results = {};
+	results.author = id;
+	
+	res.render('user_get', {
+		title: results.author,
+		data: results
+	});
+}
+
+exports.getdetails = function(req, res)
+{
+	var id = req.params.id;
 	var hnuser = require('hnuser');
 	hnuser_wrapper(id, function(results)
 	{
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
-		res.render('user_get', {
+		res.render('user_getdetails', {
 			title: results.author,
-			data: results			
+			data: results
 		});
 	});
 }
+
+
+/*exports.linechart = function(req, res)
+{
+	var id = req.params.id;
+	var hnuser = require('hnuser');
+	hnuser_wrapper(id, function(results)
+	{
+		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
+		res.render('linechart', {
+			data_stringified: JSON.stringify(results) //TODO: for now
+		});
+	});
+}*/
 
 exports.get_json = function(req, res)
 {

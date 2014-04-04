@@ -12,6 +12,8 @@
     "connect": "^2.14.3",
     "connect-slashes": "^1.2.0",
     "memjs": "^0.8.4",
-    "connect-favicons": "0.0.4"
+    "connect-favicons": "0.0.4",
+    "jsdom": "~0.10.4",
+    "d3": "~3.4.4"
   }
 }

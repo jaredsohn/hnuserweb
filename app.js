@@ -42,6 +42,10 @@ app.get('/user/:id/csv/', user.get_csv);
 app.get('/user/:id/stats_csv/', user.get_stats_csv);
 app.get('/user/:id/stats_json/', user.get_stats_json);
 app.get('/user/:id/', user.get);
+app.get('/userdetails/:id/', user.getdetails);
+
+//app.get('/linechart/:id/', user.linechart);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
