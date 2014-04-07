@@ -1,4 +1,3 @@
-
 /*
  * GET user info.
  */
@@ -6,7 +5,7 @@
 var memjs = require('memjs');
 var memjs_client = memjs.Client.create();
 
-var hnuser_wrapper = function(id, callback)
+var hnuserstats_wrapper = function(id, callback)
 {
 	memjs_client.get(id, function(err,val,key) {
 		if ((err === null) && (val !== null))
@@ -16,16 +15,17 @@ var hnuser_wrapper = function(id, callback)
 		} else
 		{
 			console.log(id + " - NOT found in cache");
-			var hnuser = require('hnuser');
-			hnuser.hnuser(id, function(results) {
-				console.log("err = ");
-				console.log(err);
+			var hnuserstats = require('hnuserstats');
+			hnuserstats.hnuserstats(id, function(err2, results) {
 				if (!err)
 				{ // TODO: assuming that err means that memcached isn't working at all
+
+					// TODO: handle err here
+
 					console.log("writing to cache '" + id + "'");
 					memjs_client.set(id, JSON.stringify(results));
 				}
-				callback(results);
+				callback(err2, results);
 			});
 		}
 	});
@@ -47,8 +47,7 @@ exports.get = function(req, res)
 exports.getdetails = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
 		res.render('user_getdetails', {
@@ -62,8 +61,7 @@ exports.getdetails = function(req, res)
 /*exports.linechart = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
 		res.render('linechart', {
@@ -75,8 +73,7 @@ exports.getdetails = function(req, res)
 exports.get_json = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
 		res.setHeader('Content-disposition', 'attachment; filename=' + id + ".json");
 		res.setHeader('Content-type', 'application/json');
@@ -88,8 +85,7 @@ exports.get_json = function(req, res)
 exports.get_stats_json = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
 		delete results.hits; // Don't send all of that data as bandwidth
 
@@ -102,10 +98,10 @@ exports.get_stats_json = function(req, res)
 exports.get_csv = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
-		hnuser.hnuser_data_to_csv(id, results, function(filename, contents)
+		var hnuserdownload = require('hnuserdownload');
+		hnuserdownload.to_csv(id, results, function(filename, contents)
 		{
 			res.setHeader('Content-type', 'text/csv');
 			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
@@ -117,10 +113,10 @@ exports.get_csv = function(req, res)
 exports.get_stats_csv = function(req, res)
 {
 	var id = req.params.id;
-	var hnuser = require('hnuser');
-	hnuser_wrapper(id, function(results)
+	hnuserstats_wrapper(id, function(err, results)
 	{
-		hnuser.hnuser_stats_to_csv(id, results, function(filename, contents)
+		var hnuserstats = require('hnuserstats');
+		hnuserstats.to_csv(id, results, function(filename, contents)
 		{
 			res.setHeader('Content-type', 'text/csv');
 			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
