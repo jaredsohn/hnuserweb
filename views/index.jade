@@ -4,6 +4,17 @@ block content
   h1 hnuser BETA
   p This site is a web interface to the hnuser npm module.  Still in BETA.
   p
+
+
+  a(href="https://github.com/jaredsohn/hnuserweb")
+     img(style="position: absolute; top: 0; right: 0; border: 0;",src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67",alt="Fork me on GitHub",data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png")
+
+
+  form(id="showinfo")
+     p Enter your Hacker News Username:&nbsp;
+     input(id="username",type="text")
+     input(type="submit",value="See your Data")
+  p
   p Download your Hacker News comments and stories and get user statistics.
   p  
   p <b>Usage:</b>
@@ -12,3 +23,16 @@ block content
   p    Add /json, /csv or /stats_csv to the above URL to download that user's articles/stories in different formats.
   p
   p There is also a <a href="https://chrome.google.com/webstore/detail/hacker-news-karma-breakdo/mffigdmfbplhmdmbgncgncndjngcdlni">Chrome extension</a> that overlays comment/story karma on the Hacker News user page.
+
+
+  script.
+    function evtSubmit(e) {
+      // code
+      e.preventDefault();
+      window.location.href = "/user/" + document.getElementById("username").value;
+    };
+
+    var showInfoForm = document.getElementById("showinfo");
+    if (showInfoForm.addEventListener) {
+      showInfoForm.addEventListener('submit', evtSubmit, false);
+    }
