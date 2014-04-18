@@ -10,6 +10,6 @@ block content
   p Comment karma:  #{data.comment_karma}  (#{data.comment_count} comments)
   p Story karma: #{data.story_karma} (#{data.story_count} stories)
   p % comment karma: #{data.comment_karma_percent}
-  p Unknown karma (deletions/lag/?): #{unknown_karma}
+  p Unknown karma (deletions/lag/?): #{data.unknown_karma}
 
-  <a href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a href="./json/" download>Download JSON</a>
+  <a href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a href="https://news.ycombinator.com/user?id=#{data.author}">hn profile</a>&nbsp;&nbsp;<a href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a href="./json/" download>Download JSON</a>
