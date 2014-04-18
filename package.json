@@ -16,5 +16,9 @@
     "d3": "~3.4.4",
     "hnuserstats": "~0.2.3",
     "hnuserdownload": "^0.1.6"
-  }
+  },
+ "engines": {
+        "node": "0.10.x",
+        "npm": "1.4.3"
+  }  
 }
