@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "hnuserweb",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -14,8 +14,8 @@
     "connect-favicons": "0.0.4",
     "jsdom": "~0.10.4",
     "d3": "~3.4.4",
-    "hnuserstats": "~0.2.3",
-    "hnuserdownload": "^0.1.6"
+    "hnuserstats": "~0.2.6",
+    "hnuserdownload": "^0.1.7"
   },
  "engines": {
         "node": "0.10.x",
