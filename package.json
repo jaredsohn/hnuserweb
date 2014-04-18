@@ -14,7 +14,7 @@
     "connect-favicons": "0.0.4",
     "jsdom": "~0.10.4",
     "d3": "~3.4.4",
-    "hnuserstats": "~0.2.6",
+    "hnuserstats": "~0.2.7",
     "hnuserdownload": "^0.1.7"
   },
  "engines": {
