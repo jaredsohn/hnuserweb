@@ -49,10 +49,13 @@ exports.getdetails = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		results.hits = [];
+		console.log(results);
+
+
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
 		res.render('user_getdetails', {
 			title: results.author,
-			unknown_karma: results.userinfo_karma - results.comment_karma - results.story_karma,
 			data: results
 		});
 	});
