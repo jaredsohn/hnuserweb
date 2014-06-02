@@ -1,11 +1,13 @@
 extends layout
 
 block content
-  p created: #{data.userinfo_created_at}
+  p created: #{data.userinfo_days_ago} days ago
   p karma: #{data.userinfo_karma}
-  p average: #{data.userinfo_avg}
+  p average: #{data.userinfo_avg_rounded}
   p about: 
-  p!= data.userinfo_about
+  div(style="white-space: pre-wrap")
+    small
+      !=data.userinfo_about
   p
   p Comment karma:  #{data.comment_karma}  (#{data.comment_count} comments)
   p Story karma: #{data.story_karma} (#{data.story_count} stories)
