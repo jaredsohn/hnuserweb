@@ -68,7 +68,6 @@ var hnuserstats = function()
 	}
 
 	// this runs synchronously, updates data object to include statistics
-	// TODO: add histograms?
 	var _get_stats = function(data)
 	{
 		var found_hit_type = false;
@@ -87,11 +86,17 @@ var hnuserstats = function()
 		data.lastyear_comment_toplevel_count = 0;
 		data.lastyear_comment_toplevel_karma = 0;
 
+		data.items_length = 0;
+		var user_unique_words = {};
+		var user_word_count = 0;
+		var user_total_word_length = 0;
+
 		var d = new Date();
 		var year_ago_created_at_i = d.setFullYear(d.getFullYear() - 1) / 1000;
 
 		for (i = 0; i < results.length; i++)
 		{
+			var itemtext = "";
 			for (j = 0; j < results[i]._tags.length; j++)
 			{
 				var ly = (results[i].created_at_i > year_ago_created_at_i); // is data from last year?
@@ -99,6 +104,8 @@ var hnuserstats = function()
 				if (results[i]._tags[j] === "story")
 				{
 					results[i].type = "story";
+					itemtext = ""; // for now, we do not include story title and text in this (i.e. it is comments only)
+					//itemtext = results[i].title + " " + results[i].story_text;				
 					data.story_karma += results[i].points - 1;
 					data.story_count++;
 					if (ly)
@@ -106,11 +113,12 @@ var hnuserstats = function()
 						data.lastyear_story_karma += results[i].points - 1;
 						data.lastyear_story_count++;
 					}
-					found_hit_type = true;					
+					found_hit_type = true;
 					break;
 				} else if (results[i]._tags[j] === "comment")
 				{
 					results[i].type = "comment";
+					itemtext = results[i].comment_text;
 					data.comment_karma += results[i].points - 1;
 					data.comment_count++;
 					if (ly)
@@ -136,10 +144,41 @@ var hnuserstats = function()
 			{
 				console.log("unexpected hit type");
 				console.log(results[i]);			
-				continue;	
+				continue;
+			}
+
+			if (itemtext !== "")
+			{
+				data.items_length += itemtext.length;
+				itemtext = itemtext.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,' ');
+				itemtext = itemtext.toLowerCase();
+				var words = itemtext.split(" ");
+				results[i].word_count = words.length;
+				user_word_count += words.length;
+
+				var item_unique_words = {};
+				var item_total_word_length = 0;
+				var word_index = 0;
+				for (word_index = 0; word_index < words.length; word_index++)
+				{
+					var word = words[word_index];
+
+					item_total_word_length += word.length;
+					user_total_word_length += word.length;
+
+					item_unique_words[word] = true;
+					user_unique_words[word] = true;
+				}
+
+				results[i].ave_word_length = item_total_word_length / words.length;
+				results[i].unique_word_count = Object.keys(item_unique_words).length;
 			}
 		}
 		data.unknown_karma = data.userinfo_karma - data.comment_karma - data.story_karma;
+
+		data.unique_word_count = Object.keys(user_unique_words).length;
+		data.ave_word_length = user_total_word_length / user_word_count;
+		// data.items_length calculated as we go
 	}
 };
 

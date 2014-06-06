@@ -15,3 +15,65 @@ block content
   p Unknown karma (deletions/lag/?): #{data.unknown_karma}
 
   <a href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a href="https://news.ycombinator.com/user?id=#{data.author}">hn profile</a>&nbsp;&nbsp;<a href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a href="./json/" download>Download JSON</a>
+
+  link(rel='stylesheet', href='/stylesheets/nv.d3.min.css')
+  link(rel='stylesheet', href='/stylesheets/hnuserweb.css')
+
+  div(id="chart")
+    svg
+
+  script.
+    var data = !{JSON.stringify(data)}
+
+  script(src="/lib/d3.v3.js")
+  script(src="/lib/nv.d3.min.js")
+
+  script.
+    var piedata = [
+      {
+        "label": "One",
+        "value" : 29.765957771107
+      } ,
+      {
+        "label": "Two",
+        "value" : 0
+      } ,
+      {
+        "label": "Three",
+        "value" : 32.807804682612
+      } ,
+      {
+        "label": "Four",
+        "value" : 196.45946739256
+      } ,
+      {
+        "label": "Five",
+        "value" : 0.19434030906893
+      } ,
+      {
+        "label": "Six",
+        "value" : 98.079782601442
+      } ,
+      {
+        "label": "Seven",
+        "value" : 13.925743130903
+      } ,
+      {
+        "label": "Eight",
+        "value" : 5.1387322875705
+      }
+    ]
+
+    nv.addGraph(function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.value })
+          .showLabels(true);
+
+        d3.select("#chart svg")
+            .datum(piedata)
+          .transition().duration(1200)
+            .call(chart);
+
+      return chart;
+    });

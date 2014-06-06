@@ -6,7 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "^3.4.4",
+    "express": "^3.10.2",
     "jade": "*",
     "connect": "^2.14.3",
     "connect-slashes": "^1.2.0",
@@ -14,11 +14,11 @@
     "connect-favicons": "0.0.4",
     "jsdom": "~0.10.4",
     "d3": "~3.4.4",
-    "hnuserstats": "~0.2.7",
-    "hnuserdownload": "^0.1.7"
+    "hnuserstats": "^0.3.0",
+    "hnuserdownload": "*"
   },
- "engines": {
-        "node": "0.10.x",
-        "npm": "1.4.3"
-  }  
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.4.3"
+  }
 }
