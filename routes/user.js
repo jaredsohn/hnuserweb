@@ -23,7 +23,7 @@ var hnuserstats_wrapper = function(id, callback)
 			var hnuserstats = require('hnuserstats');
 			hnuserstats.hnuserstats(id, function(err2, results) {
 				if (!err)
-				{ // TO_DO assuming that err means that memcachier isn't working at all
+				{
 					var temp_hits = [];
 					if (results.hits.length > 100)
 					{
@@ -90,13 +90,27 @@ exports.get_json = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		cb = function(results)
+		{
+			res.setHeader('Content-disposition', 'attachment; filename=' + id + ".json");
+			res.setHeader('Content-type', 'application/json');
+			res.jsonp(results);			
+		}
+
 		if ((results.hits.length === 0) && ((results.story_count !== 0) || (results.comment_count !== 0)))
 		{
-			// TODO: request data again
+			var hnuserstats = require('hnuserstats');
+			hnuserstats.hnuserstats(id, function(err2, results) {
+				if (!err)
+				{
+					cb(results);
+				} else
+					console.log(err);
+			});
+		} else
+		{
+			cb(results);
 		}
-		res.setHeader('Content-disposition', 'attachment; filename=' + id + ".json");
-		res.setHeader('Content-type', 'application/json');
-		res.jsonp(results);
 	});
 }
 
@@ -119,18 +133,28 @@ exports.get_csv = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		cb = function(results)
+		{
+			var hnuserdownload = require('hnuserdownload');
+			hnuserdownload.to_csv(id, results, function(filename, contents)
+			{
+				res.setHeader('Content-type', 'text/csv');
+				res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+				res.jsonp(contents);
+			});
+		}
 		if ((results.hits.length === 0) && ((results.story_count !== 0) || (results.comment_count !== 0)))
 		{
-			// TODO: request data again
+			var hnuserstats = require('hnuserstats');
+			hnuserstats.hnuserstats(id, function(err2, results) {
+				if (!err)
+				{
+					cb(results);
+				} else
+					console.log(err);
+			});
 		}
-
-		var hnuserdownload = require('hnuserdownload');
-		hnuserdownload.to_csv(id, results, function(filename, contents)
-		{
-			res.setHeader('Content-type', 'text/csv');
-			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-			res.jsonp(contents);
-		});
+		cb(results);
 	});
 }
 
