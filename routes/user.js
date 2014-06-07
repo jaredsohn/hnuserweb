@@ -2,9 +2,17 @@
  * GET user info.
  */
 
+// TODO: when requesting json/csv, if entry in cache has no hits (and counts indicate there should be data), then 
+// calculate it manually.
+
 var memjs = require('memjs');
 var memjs_client = memjs.Client.create();
 
+
+// We discard hits here (and force json/csv downloaders to recalculate) if it is especially large (due to downloading a prolific user).
+// This is done since 1) it helps us prevent our cache from filling up for just a few users, 2) we currently cannot cache large entries 
+// anyway via heroku memcachier, 3) I suspect popular user profiles will be visited more by people are just curious about it instead of
+// by the users themselves.
 var hnuserstats_wrapper = function(id, callback)
 {
 	memjs_client.get(id, function(err,val,key) {
@@ -18,7 +26,7 @@ var hnuserstats_wrapper = function(id, callback)
 			var hnuserstats = require('hnuserstats');
 			hnuserstats.hnuserstats(id, function(err2, results) {
 				if (!err)
-				{ // TODO: assuming that err means that memcached isn't working at all
+				{ // TODO: assuming that err means that memcachier isn't working at all
 
 					// TODO: handle err here
 
@@ -69,19 +77,6 @@ exports.getdetails = function(req, res)
 	});
 }
 
-
-/*exports.linechart = function(req, res)
-{
-	var id = req.params.id;
-	hnuserstats_wrapper(id, function(err, results)
-	{
-		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
-		res.render('linechart', {
-			data_stringified: JSON.stringify(results) //TODO: for now
-		});
-	});
-}*/
-
 exports.get_json = function(req, res)
 {
 	var id = req.params.id;
@@ -93,7 +88,7 @@ exports.get_json = function(req, res)
 	});
 }
 
-// Redundant if user gets full JSON.  (But for CSV, each provides unique content.)
+// Redundant if user gets full JSON.  (But for CSV, each provides unique content.  Also, for heavy users, only stats are cached.)
 exports.get_stats_json = function(req, res)
 {
 	var id = req.params.id;
