@@ -49,6 +49,11 @@ exports.getdetails = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		if (err)
+		{
+			console.log(err);
+			return;
+		}
 		results.hits = [];
 		results.userinfo_about = results.userinfo_about.replace('\\n', '\n');
 		results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;

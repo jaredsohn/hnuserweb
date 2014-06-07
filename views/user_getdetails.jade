@@ -19,7 +19,21 @@ block content
   link(rel='stylesheet', href='/stylesheets/nv.d3.min.css')
   link(rel='stylesheet', href='/stylesheets/hnuserweb.css')
 
-  div(id="chart")
+  div(id="chart1")
+    svg
+  div(id="chart2")
+    svg
+  div(id="chart3")
+    svg
+  div(id="chart4")
+    svg
+  div(id="chart5")
+    svg
+  div(id="chart6")
+    svg
+  div(id="chart7")
+    svg
+  div(id="chart8")
     svg
 
   script.
@@ -29,51 +43,38 @@ block content
   script(src="/lib/nv.d3.min.js")
 
   script.
-    var piedata = [
-      {
-        "label": "One",
-        "value" : 29.765957771107
-      } ,
-      {
-        "label": "Two",
-        "value" : 0
-      } ,
-      {
-        "label": "Three",
-        "value" : 32.807804682612
-      } ,
-      {
-        "label": "Four",
-        "value" : 196.45946739256
-      } ,
-      {
-        "label": "Five",
-        "value" : 0.19434030906893
-      } ,
-      {
-        "label": "Six",
-        "value" : 98.079782601442
-      } ,
-      {
-        "label": "Seven",
-        "value" : 13.925743130903
-      } ,
-      {
-        "label": "Eight",
-        "value" : 5.1387322875705
-      }
-    ]
+    createPieChart = function(id, labels, values)
+    {
+      if (labels.length !== values.length)
+        console.log("error creating pie chart: labels and values lengths differ");
 
-    nv.addGraph(function() {
-      var chart = nv.models.pieChart()
-          .x(function(d) { return d.label })
-          .y(function(d) { return d.value })
-          .showLabels(true);
+      var chart_data = [];
+      for (i = 0; i < labels.length; i++)
+        chart_data.push({"label": labels[i], "value": values[i]});
 
-        d3.select("#chart svg")
-            .datum(piedata)
-          .transition().duration(1200)
-            .call(chart);
+      nv.addGraph(function() {
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.value })
+            .showLabels(true);
 
-      return chart;
-    });
+          d3.select("#" + id + " svg")
+              .datum(chart_data)
+            .transition().duration(1200)
+              .call(chart);
+
+        return chart;
+      });        
+    };
+
+    // TODO: create multiple charts here based on data i have
+    createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
+    createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
+
+
+    //createPieChart("chart3", ["One", "Two", "Three"], [100, 200, 300]);
+    //createPieChart("chart4", ["One", "Two", "Three"], [100, 200, 300]);
+    //createPieChart("chart5", ["One", "Two", "Three"], [100, 200, 300]);
+    //createPieChart("chart6", ["One", "Two", "Three"], [100, 200, 300]);
+    //createPieChart("chart7", ["One", "Two", "Three"], [100, 200, 300]);
+    //createPieChart("chart8", ["One", "Two", "Three"], [100, 200, 300]);
