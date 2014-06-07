@@ -2,9 +2,6 @@
  * GET user info.
  */
 
-// TODO: when requesting json/csv, if entry in cache has no hits (and counts indicate there should be data), then 
-// calculate it manually.
-
 var memjs = require('memjs');
 var memjs_client = memjs.Client.create();
 
@@ -19,20 +16,31 @@ var hnuserstats_wrapper = function(id, callback)
 		if ((err === null) && (val !== null))
 		{
 			console.log(id + " - found in cache!");
-			callback(JSON.parse(val.toString()));
+			callback(null, JSON.parse(val.toString()));
 		} else
 		{
 			console.log(id + " - NOT found in cache");
 			var hnuserstats = require('hnuserstats');
 			hnuserstats.hnuserstats(id, function(err2, results) {
 				if (!err)
-				{ // TODO: assuming that err means that memcachier isn't working at all
-
-					// TODO: handle err here
+				{ // TO_DO assuming that err means that memcachier isn't working at all
+					var temp_hits = [];
+					if (results.hits.length > 100)
+					{
+						console.log("Lots of data...only storing stats in cache")
+						temp_hits = results.hits;
+						results.hits = []; // don't cache bigger objects
+					}
 
 					console.log("writing to cache '" + id + "'");
 					memjs_client.set(id, JSON.stringify(results));
-				}
+
+					if (temp_hits.length > 0)
+						results.hits = temp_hits; // restore it
+
+				} else
+					console.log(err);
+
 				callback(err2, results);
 			});
 		}
@@ -59,7 +67,7 @@ exports.getdetails = function(req, res)
 	{
 		if (err)
 		{
-			console.log(err);
+			console.log("Error: " + err);
 			return;
 		}
 		results.hits = [];
@@ -82,6 +90,10 @@ exports.get_json = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		if ((results.hits.length === 0) && ((results.story_count !== 0) || (results.comment_count !== 0)))
+		{
+			// TODO: request data again
+		}
 		res.setHeader('Content-disposition', 'attachment; filename=' + id + ".json");
 		res.setHeader('Content-type', 'application/json');
 		res.jsonp(results);
@@ -107,6 +119,11 @@ exports.get_csv = function(req, res)
 	var id = req.params.id;
 	hnuserstats_wrapper(id, function(err, results)
 	{
+		if ((results.hits.length === 0) && ((results.story_count !== 0) || (results.comment_count !== 0)))
+		{
+			// TODO: request data again
+		}
+
 		var hnuserdownload = require('hnuserdownload');
 		hnuserdownload.to_csv(id, results, function(filename, contents)
 		{
