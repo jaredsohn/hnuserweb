@@ -5,7 +5,7 @@ block content
   p karma: #{data.userinfo_karma}
   p average: #{data.userinfo_avg_rounded}
   p about: 
-  div(style="white-space: pre-wrap")
+  div(style="white-space: pre-wrap; margin-left: 15px")
     small
       !=data.userinfo_about
   p
@@ -135,4 +135,6 @@ block content
     // TODO: create multiple charts here based on data i have
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
-    createLineChart("chart3", ["karma", "time"], sinAndCos());
+    createLineChart("chart3", ["time", "karma"], sinAndCos());
+
+
