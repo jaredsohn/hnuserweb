@@ -126,8 +126,6 @@ get_line_chart_data = function(hits)
 
 	daily_results = Object.keys(results_by_day).sort();
 
-	console.log(daily_results);
-
 	var results = [];
 	for (i = 0; i < daily_results.length; i++)
 	{

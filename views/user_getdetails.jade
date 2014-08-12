@@ -25,16 +25,6 @@ block content
     svg
   div(id="chart3")
     svg
-  div(id="chart4")
-    svg
-  div(id="chart5")
-    svg
-  div(id="chart6")
-    svg
-  div(id="chart7")
-    svg
-  div(id="chart8")
-    svg
 
   script.
     var data = !{JSON.stringify(data)}
@@ -56,12 +46,16 @@ block content
         var chart = nv.models.pieChart()
             .x(function(d) { return d.label })
             .y(function(d) { return d.value })
-            .showLabels(true);
+            .showLabels(true)
+            .showLegend(false)
 
           d3.select("#" + id + " svg")
               .datum(chart_data)
             .transition().duration(1200)
               .call(chart);
+
+        //Update the chart when window resizes.
+        nv.utils.windowResize(function() { chart.update() });
 
         return chart;
       });        
@@ -70,50 +64,75 @@ block content
     createLineChart = function(id, labels, values)
     {
       console.log("hi");
-      
+
       nv.addGraph(function() {
-        var values_for_chart = {};
-        values_for_chart.values = values;
-        values_for_chart.key = "Sine Wave";
-        values_for_chart.color = "#ff7f0e";
-        console.log(values_for_chart);
         var chart = nv.models.lineChart()
-          .options({
-            margin: {left: 100, bottom: 100},
-            x: function(d,i) { return i},
-            showXAxis: true,
-            showYAxis: true,
-            transitionDuration: 250
-          });
-          
-          // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
-          chart.xAxis
-            //.axisLabel("Time (s)")
-            //.tickFormat(d3.format(',.1f'))
+                      .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+                      .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+                      .transitionDuration(350)  //how fast do you want the lines to transition?
+                      .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+                      .showYAxis(true)        //Show the y-axis
+                      .showXAxis(true)        //Show the x-axis
+        ;
 
-          .yAxis
-            //.axisLabel('Voltage (v)')
-            //.tickFormat(d3.format(',.2f'))
-            ;
+      chart.xAxis     //Chart x-axis settings
+          .axisLabel(labels[0])
+          .tickFormat(d3.format(',r'));
 
-        d3.select('#' + id + ' svg')
-          .datum(values_for_chart)
-          .call(chart);
+      chart.yAxis     //Chart y-axis settings
+          .axisLabel(labels[1])
+          .tickFormat(d3.format('.02f'));
 
-        nv.utils.windowResize(chart.update);
+      /* Done setting the chart up? Time to render it!*/
+      
+      d3.select('#' + id + ' svg')
+        .datum(values)
+        .call(chart);
+
+        //Update the chart when window resizes.
+        nv.utils.windowResize(function() { chart.update() });
 
         return chart;
       });
       
     }
 
+    /**************************************
+     * Simple test data generator
+     */
+    function sinAndCos() {
+      var sin = [],sin2 = [],
+          cos = [];
+
+      //Data is represented as an array of {x,y} pairs.
+      for (var i = 0; i < 100; i++) {
+        sin.push({x: i, y: Math.sin(i/10)});
+        sin2.push({x: i, y: Math.sin(i/10) *0.25 + 0.5});
+        cos.push({x: i, y: .5 * Math.cos(i/10)});
+      }
+
+      //Line chart data should be sent as an array of series objects.
+      return [
+        {
+          values: sin,      //values - represents the array of {x,y} data points
+          key: 'Sine Wave', //key  - the name of the series.
+          color: '#ff7f0e'  //color - optional: choose your own line color.
+        },
+        {
+          values: cos,
+          key: 'Cosine Wave',
+          color: '#2ca02c'
+        },
+        {
+          values: sin2,
+          key: 'Another sine wave',
+          color: '#7777ff',
+          area: true      //area - set to true if you want this line to turn into a filled area chart.
+        }
+      ];
+    }    
+
     // TODO: create multiple charts here based on data i have
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
-    createLineChart("chart3", ["karma", "time"], [{"x": 1, "y": 100}, {"x": 100, "y": 500}]);
-
-    //createPieChart("chart4", ["One", "Two", "Three"], [100, 200, 300]);
-    //createPieChart("chart5", ["One", "Two", "Three"], [100, 200, 300]);
-    //createPieChart("chart6", ["One", "Two", "Three"], [100, 200, 300]);
-    //createPieChart("chart7", ["One", "Two", "Three"], [100, 200, 300]);
-    //createPieChart("chart8", ["One", "Two", "Three"], [100, 200, 300]);
+    createLineChart("chart3", ["karma", "time"], sinAndCos());
