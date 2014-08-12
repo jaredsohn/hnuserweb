@@ -29,7 +29,9 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(slashes(true));
+app.use(slashes(true)); // was true; false helps get css files
+app.use("/stylesheets", express.static(__dirname + '/stylesheets'));
+
 
 // development only
 if ('development' == app.get('env')) {

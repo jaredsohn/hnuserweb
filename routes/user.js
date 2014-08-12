@@ -60,6 +60,93 @@ exports.get = function(req, res)
 	});
 }
 
+
+//http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+Date.prototype.yyyymmdd = function() {
+	var yyyy = this.getFullYear().toString();
+	var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+	var dd  = this.getDate().toString();
+
+	return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+};
+
+get_line_chart_data = function(hits)
+{
+	var results_by_day = {};
+	fields = ["comment_karma", "comment_count", "story_karma", "story_count"];
+
+	for (i = 0; i < hits.length; i++)
+	{
+		var hit = {};
+		for (j = 0; j < fields.length; j++)
+			hit[fields[j]] = 0;
+
+		// Interpret hits to get relevant data
+		var tag_found = false;
+		for (j = 0; j < hits[i]._tags.length; j++)
+		{
+			if (hits[i]._tags[j] === "comment")
+			{				
+				hit["comment_count"] = 1;
+				hit["comment_karma"] = hits[i].points - 1;
+				tag_found = true;
+				break;
+			} else if (hits[i]._tags[j] === "story")
+			{
+				hit["story_count"] = 1;
+				hit["story_karma"] = hits[i].points - 1;
+				tag_found = true;
+				break;
+			}
+		}
+
+		// store data with other data from same day
+		var datetime = new Date(hits[i].created_at_i * 1000);
+		var datestr = datetime.yyyymmdd();
+
+		if (typeof(results_by_day[datestr]) === "undefined")
+		{
+			var obj = {};
+			for (j = 0; j < fields.length; j++)
+				obj[fields[j]] = hit[fields[j]];
+			results_by_day[datestr] = obj;
+		} else
+		{
+			var obj = results_by_day[datestr];
+			for (j = 0; j < fields.length; j++)
+				obj[fields[j]] += hit[fields[j]];
+			results_by_day[datestr] = obj;
+		}
+	}
+
+	// create sorted array. keep running tally.
+	var totals = {};
+	for (j = 0; j < fields.length; j++)
+		totals[fields[j]] = 0;
+
+	daily_results = Object.keys(results_by_day).sort();
+
+	console.log(daily_results);
+
+	var results = [];
+	for (i = 0; i < daily_results.length; i++)
+	{
+		var obj = {};
+		var day_obj = results_by_day[daily_results[i]];	
+		for (j = 0; j < fields.length; j++)
+		{
+			totals[fields[j]] += day_obj[fields[j]];
+			obj[fields[j]] = day_obj[fields[j]];
+
+			obj[("total_" + fields[j])] = totals[fields[j]]; 
+		}
+		obj.created_at_i = (daily_results[i]).created_at_i;
+		results.push(obj);
+	}
+
+	return results;
+}
+
 exports.getdetails = function(req, res)
 {
 	var id = req.params.id;
@@ -70,13 +157,14 @@ exports.getdetails = function(req, res)
 			console.log("Error: " + err);
 			return;
 		}
+		results.line_chart_data = get_line_chart_data(results.hits);
 		results.hits = [];
 		results.userinfo_about = results.userinfo_about.replace('\\n', '\n');
 		results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;
 		results.userinfo_days_ago = Math.floor((new Date().getTime() - new Date(results.userinfo_created_at_i * 1000).getTime()) / 1000 / 86400)
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
 
-		console.log(results);
+		//console.log(results);
 
 		res.render('user_getdetails', {
 			title: results.author,

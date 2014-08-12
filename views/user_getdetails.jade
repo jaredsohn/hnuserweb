@@ -88,12 +88,12 @@ block content
           
           // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
           chart.xAxis
-            .axisLabel("Time (s)")
-            .tickFormat(d3.format(',.1f'))
+            //.axisLabel("Time (s)")
+            //.tickFormat(d3.format(',.1f'))
 
           .yAxis
-            .axisLabel('Voltage (v)')
-            .tickFormat(d3.format(',.2f'))
+            //.axisLabel('Voltage (v)')
+            //.tickFormat(d3.format(',.2f'))
             ;
 
         d3.select('#' + id + ' svg')
