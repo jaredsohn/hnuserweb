@@ -67,12 +67,51 @@ block content
       });        
     };
 
+    createLineChart = function(id, labels, values)
+    {
+      console.log("hi");
+      
+      nv.addGraph(function() {
+        var values_for_chart = {};
+        values_for_chart.values = values;
+        values_for_chart.key = "Sine Wave";
+        values_for_chart.color = "#ff7f0e";
+        console.log(values_for_chart);
+        var chart = nv.models.lineChart()
+          .options({
+            margin: {left: 100, bottom: 100},
+            x: function(d,i) { return i},
+            showXAxis: true,
+            showYAxis: true,
+            transitionDuration: 250
+          });
+          
+          // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
+          chart.xAxis
+            .axisLabel("Time (s)")
+            .tickFormat(d3.format(',.1f'))
+
+          .yAxis
+            .axisLabel('Voltage (v)')
+            .tickFormat(d3.format(',.2f'))
+            ;
+
+        d3.select('#' + id + ' svg')
+          .datum(values_for_chart)
+          .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+      });
+      
+    }
+
     // TODO: create multiple charts here based on data i have
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
+    createLineChart("chart3", ["karma", "time"], [{"x": 1, "y": 100}, {"x": 100, "y": 500}]);
 
-
-    //createPieChart("chart3", ["One", "Two", "Three"], [100, 200, 300]);
     //createPieChart("chart4", ["One", "Two", "Three"], [100, 200, 300]);
     //createPieChart("chart5", ["One", "Two", "Three"], [100, 200, 300]);
     //createPieChart("chart6", ["One", "Two", "Three"], [100, 200, 300]);
