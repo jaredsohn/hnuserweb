@@ -25,6 +25,14 @@ block content
     svg
   div(id="chart3")
     svg
+  div(id="chart4")
+    svg
+  div(id="chart5")
+    svg
+  div(id="chart6")
+    svg
+  div(id="chart7")
+    svg
 
   script.
     var data = !{JSON.stringify(data)}
@@ -96,113 +104,136 @@ block content
 
         return chart;
       });
-      
     }
 
-    function days(num) {
-      return num*60*60*1000*24
-    }
-
-    function fakeActivityByDate() {
-       var lineData = [];
-       var y=0;
-       var start_date = new Date() - days(730); // two years ago
-
-       for (var i = 0; i < 500; i++) {
-         lineData.push({x: new Date(start_date + days(i)), y: y});
-         y=y+Math.floor((Math.random()*10)-3);
-       }
-
-       return [
-         {
-           values: lineData,
-           key: 'Activity',
-           color: '#ff7f0e'
-         }
-       ];
-     }
-
-    /**************************************
-     * Simple test data generator
-     */
-    function sinAndCos() {
-      var sin = [],sin2 = [],
-          cos = [];
-
-      //Data is represented as an array of {x,y} pairs.
-      for (var i = 0; i < 100; i++) {
-        sin.push({x: i, y: Math.sin(i/10)});
-        sin2.push({x: i, y: Math.sin(i/10) *0.25 + 0.5});
-        cos.push({x: i, y: .5 * Math.cos(i/10)});
-      }
-
-      //Line chart data should be sent as an array of series objects.
-      return [
-        {
-          values: sin,      //values - represents the array of {x,y} data points
-          key: 'Sine Wave', //key  - the name of the series.
-          color: '#ff7f0e'  //color - optional: choose your own line color.
-        },
-        {
-          values: cos,
-          key: 'Cosine Wave',
-          color: '#2ca02c'
-        },
-        {
-          values: sin2,
-          key: 'Another sine wave',
-          color: '#7777ff',
-          area: true      //area - set to true if you want this line to turn into a filled area chart.
-        }
-      ];
-    }    
 
 
-    // comment karma only for now
-    function get_karma_data_for_linechart()
+    function get_karma_data_series()
     {
       var comment_karma = [];
       var story_karma = [];
-      var comment_count = [];
-      var story_count = [];
+      var total_karma = [];
 
       for (i = 0; i < data.line_chart_data.length; i++)
       {
         comment_karma.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_karma });
         story_karma.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_karma });
-        comment_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_count });
-        story_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_count });
+        total_karma.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_karma + data.line_chart_data[i].total_comment_karma });
       }
 
       return [
       {
         values : comment_karma,
-         key: 'Comment karma',
-        color: '#ffff0e'
-      },
+        key: 'Comment karma',
+        color: '#ff00ff'
+       },
       {
         values : story_karma,
-         key: 'Story karma',
+        key: 'Story karma',
         color: '#ff7f0e'
       },
       {
-        values : comment_count,
-         key: 'Comment count',
-        color: '#ff7fff'
-      },
-      {
-        values : story_count,
-         key: 'Story count',
-        color: '#007f0e'
+        values : total_karma,
+        key: 'Total karma',
+        color: '#ff0000'
       }
-
-
       ];
     }
 
-    // TODO: create multiple charts here based on data i have
+    function get_karma_count_series()
+    {
+      var comment_count = [];
+      var story_count = [];
+      var total_count = [];
+
+      for (i = 0; i < data.line_chart_data.length; i++)
+      {
+        comment_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_count });
+        story_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_count });
+        total_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_count + data.line_chart_data[i].total_comment_count });
+      }
+
+      return [
+      {
+        values : comment_count,
+        key: 'Comment count',
+        color: '#ff00ff'
+       },
+      {
+        values : story_count,
+       key: 'Story count',
+        color: '#007f0e'
+      },
+      {
+        values : total_count,
+        key: 'Total count',
+        color: '#ff0000'
+      }
+      ];
+    }    
+
+    function get_comment_karma_ave_series()
+    {
+      var comment_ave = [];
+
+      for (i = 0; i < data.line_chart_data.length; i++)
+      {
+        comment_ave.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_karma / data.line_chart_data[i].total_comment_count   });
+      }
+
+      return [
+      {
+        values : comment_ave,
+         key: 'Comment Average',
+        color: '#ff00ff'
+      }
+      ];
+    }    
+
+
+    function get_story_karma_ave_series()
+    {
+      var story_ave = [];
+
+      for (i = 0; i < data.line_chart_data.length; i++)
+      {
+        story_ave.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_karma / data.line_chart_data[i].total_story_count});
+      }
+
+      return [
+      {
+        values : story_ave,
+         key: 'Story Average',
+        color: '#ff7f0e'
+      }
+      ];
+    }  
+
+    function get_comment_karma_percentage_series()
+    {
+      var comment_karma_percentage = [];
+
+      for (i = 0; i < data.line_chart_data.length; i++)
+      {
+        comment_karma_percentage.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_karma / (data.line_chart_data[i].total_comment_karma + data.line_chart_data[i].total_story_karma) * 100 });
+      }
+
+      return [
+      {
+        values : comment_karma_percentage,
+         key: 'Comment Karma Percentage',
+        color: '#ff7f0e'
+      }
+      ];
+    }  
+
+
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
-    createLineChart("chart3", ["time", "karma"], get_karma_data_for_linechart());
+    createLineChart("chart3", ["time", "karma"], get_karma_data_series());
+    createLineChart("chart4", ["time", "count"], get_karma_count_series());
+    createLineChart("chart5", ["time", "ave karma/comment"], get_comment_karma_ave_series());
+    createLineChart("chart6", ["time", "ave karma/story"], get_story_karma_ave_series());
+    createLineChart("chart7", ["time", "comment karma percentage"], get_comment_karma_percentage_series());
 
 

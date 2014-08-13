@@ -15,7 +15,15 @@
     "jsdom": "~0.10.4",
     "d3": "~3.4.4",
     "hnuserstats": "^0.3.0",
-    "hnuserdownload": "*"
+    "hnuserdownload": "*",
+    "escape-html": "^1.0.1",
+    "parseurl": "^1.3.0",
+    "type-is": "^1.3.2",
+    "cookie": "^0.1.2",
+    "on-headers": "^1.0.0",
+    "finished": "^1.2.2",
+    "proxy-addr": "^1.0.1",
+    "serve-favicon": "^2.0.1"
   },
   "engines": {
     "node": "0.10.x",
