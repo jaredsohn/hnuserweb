@@ -109,12 +109,15 @@ get_line_chart_data = function(hits)
 			var obj = {};
 			for (j = 0; j < fields.length; j++)
 				obj[fields[j]] = hit[fields[j]];
+			obj["created_at_i"] = hits[i].created_at_i;
 			results_by_day[datestr] = obj;
 		} else
 		{
 			var obj = results_by_day[datestr];
 			for (j = 0; j < fields.length; j++)
 				obj[fields[j]] += hit[fields[j]];
+			obj["created_at_i"] = hits[i].created_at_i;
+
 			results_by_day[datestr] = obj;
 		}
 	}
@@ -137,8 +140,8 @@ get_line_chart_data = function(hits)
 			obj[fields[j]] = day_obj[fields[j]];
 
 			obj[("total_" + fields[j])] = totals[fields[j]]; 
-		}
-		obj.created_at_i = (daily_results[i]).created_at_i;
+		}		
+		obj["created_at_i"] = day_obj["created_at_i"];
 		results.push(obj);
 	}
 

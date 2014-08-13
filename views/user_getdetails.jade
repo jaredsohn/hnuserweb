@@ -77,13 +77,15 @@ block content
 
       chart.xAxis     //Chart x-axis settings
           .axisLabel(labels[0])
-          .tickFormat(d3.format(',r'));
+          .tickFormat(function(d) { return d3.time.format('%b %d %y')(new Date(d)); });
 
       chart.yAxis     //Chart y-axis settings
           .axisLabel(labels[1])
           .tickFormat(d3.format('.02f'));
 
       /* Done setting the chart up? Time to render it!*/
+
+      console.log("h2");
       
       d3.select('#' + id + ' svg')
         .datum(values)
@@ -96,6 +98,29 @@ block content
       });
       
     }
+
+    function days(num) {
+      return num*60*60*1000*24
+    }
+
+    function fakeActivityByDate() {
+       var lineData = [];
+       var y=0;
+       var start_date = new Date() - days(730); // two years ago
+
+       for (var i = 0; i < 500; i++) {
+         lineData.push({x: new Date(start_date + days(i)), y: y});
+         y=y+Math.floor((Math.random()*10)-3);
+       }
+
+       return [
+         {
+           values: lineData,
+           key: 'Activity',
+           color: '#ff7f0e'
+         }
+       ];
+     }
 
     /**************************************
      * Simple test data generator
@@ -132,9 +157,52 @@ block content
       ];
     }    
 
+
+    // comment karma only for now
+    function get_karma_data_for_linechart()
+    {
+      var comment_karma = [];
+      var story_karma = [];
+      var comment_count = [];
+      var story_count = [];
+
+      for (i = 0; i < data.line_chart_data.length; i++)
+      {
+        comment_karma.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_karma });
+        story_karma.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_karma });
+        comment_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_comment_count });
+        story_count.push({x:data.line_chart_data[i].created_at_i * 1000, y: data.line_chart_data[i].total_story_count });
+      }
+
+      return [
+      {
+        values : comment_karma,
+         key: 'Comment karma',
+        color: '#ffff0e'
+      },
+      {
+        values : story_karma,
+         key: 'Story karma',
+        color: '#ff7f0e'
+      },
+      {
+        values : comment_count,
+         key: 'Comment count',
+        color: '#ff7fff'
+      },
+      {
+        values : story_count,
+         key: 'Story count',
+        color: '#007f0e'
+      }
+
+
+      ];
+    }
+
     // TODO: create multiple charts here based on data i have
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
-    createLineChart("chart3", ["time", "karma"], sinAndCos());
+    createLineChart("chart3", ["time", "karma"], get_karma_data_for_linechart());
 
 
