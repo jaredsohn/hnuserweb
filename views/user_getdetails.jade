@@ -71,8 +71,6 @@ block content
 
     createLineChart = function(id, labels, values)
     {
-      console.log("hi");
-
       nv.addGraph(function() {
         var chart = nv.models.lineChart()
                       .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
@@ -92,8 +90,6 @@ block content
           .tickFormat(d3.format('.02f'));
 
       /* Done setting the chart up? Time to render it!*/
-
-      console.log("h2");
       
       d3.select('#' + id + ' svg')
         .datum(values)
