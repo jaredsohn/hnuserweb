@@ -24,6 +24,7 @@ var hnuserstats_wrapper = function(id, callback)
 			hnuserstats.hnuserstats(id, function(err2, results) {
 				if (!err)
 				{
+					results.line_chart_data = get_line_chart_data(results.hits);
 					var temp_hits = [];
 					if (results.hits.length > 100)
 					{
@@ -158,7 +159,6 @@ exports.getdetails = function(req, res)
 			console.log("Error: " + err);
 			return;
 		}
-		results.line_chart_data = get_line_chart_data(results.hits);
 		results.hits = [];
 		results.userinfo_about = results.userinfo_about.replace('\\n', '\n');
 		results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;
