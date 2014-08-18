@@ -11,17 +11,16 @@ block content
   p
   p Comment karma:  #{data.comment_karma}  (#{data.comment_count} comments)
   p Story karma: #{data.story_karma} (#{data.story_count} stories)
-  p % comment karma: #{data.comment_karma_percent}
-  p Unknown karma (deletions/lag/?): #{data.unknown_karma}
 
-  <a href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a href="https://news.ycombinator.com/user?id=#{data.author}">hn profile</a>&nbsp;&nbsp;<a href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a href="./json/" download>Download JSON</a>
+  <a target="_blank" href="https://hn.algolia.com/#!/all/forever/prefix/0/author%3A#{data.author}">hnsearch</a>&nbsp;&nbsp;<a target="_blank" href="https://news.ycombinator.com/user?id=#{data.author}">hn profile</a>&nbsp;&nbsp;<a target="_blank" href="./csv/" download>Download CSV</a>&nbsp;&nbsp;<a target="_blank" href="./stats_csv/" download>Download Metadata CSV</a>&nbsp;&nbsp;<a target="_blank" href="./json/" download>Download JSON</a>
 
   link(rel='stylesheet', href='/stylesheets/nv.d3.min.css')
   link(rel='stylesheet', href='/stylesheets/hnuserweb.css')
 
-  div(id="chart1")
+  p
+  div(id="chart1", style="display:inline-block")
     svg
-  div(id="chart2")
+  div(id="chart2", style="display:inline-block")
     svg
   div(id="chart3")
     svg
@@ -56,6 +55,7 @@ block content
             .y(function(d) { return d.value })
             .showLabels(true)
             .showLegend(false)
+            .labelType("percent");
 
           d3.select("#" + id + " svg")
               .datum(chart_data)
@@ -79,6 +79,7 @@ block content
                       .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
                       .showYAxis(true)        //Show the y-axis
                       .showXAxis(true)        //Show the x-axis
+                      .useInteractiveGuideline(true)
         ;
 
       chart.xAxis     //Chart x-axis settings
@@ -87,7 +88,7 @@ block content
 
       chart.yAxis     //Chart y-axis settings
           .axisLabel(labels[1])
-          .tickFormat(d3.format('.02f'));
+          .tickFormat(d3.format('.f'));
 
       /* Done setting the chart up? Time to render it!*/
       
@@ -225,7 +226,7 @@ block content
 
 
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
-    createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
+    createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted/missing/lag/?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
     createLineChart("chart3", ["time", "karma"], get_karma_data_series());
     createLineChart("chart4", ["time", "count"], get_karma_count_series());
     createLineChart("chart5", ["time", "ave karma/comment"], get_comment_karma_ave_series());

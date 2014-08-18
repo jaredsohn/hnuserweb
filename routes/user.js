@@ -25,6 +25,7 @@ var hnuserstats_wrapper = function(id, callback)
 				if (!err)
 				{
 					results.line_chart_data = get_line_chart_data(results.hits);
+					console.log(results.line_chart_data);
 					var temp_hits = [];
 					if (results.hits.length > 100)
 					{
@@ -34,7 +35,7 @@ var hnuserstats_wrapper = function(id, callback)
 					}
 
 					console.log("writing to cache '" + id + "'");
-					memjs_client.set(id, JSON.stringify(results));
+					memjs_client.set(id, JSON.stringify(results), function() {}, 60 * 60 * 4);
 
 					if (temp_hits.length > 0)
 						results.hits = temp_hits; // restore it
@@ -56,7 +57,8 @@ exports.get = function(req, res)
 	results.author = id;
 	
 	res.render('user_get', {
-		title: results.author,
+		title: results.author + " - hnuser",
+		author: results.author,
 		data: results
 	});
 }
@@ -160,7 +162,7 @@ exports.getdetails = function(req, res)
 			return;
 		}
 		results.hits = [];
-		results.userinfo_about = results.userinfo_about.replace('\\n', '\n');
+		results.userinfo_about = results.userinfo_about.replace(/\\n/g, '\n');
 		results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;
 		results.userinfo_days_ago = Math.floor((new Date().getTime() - new Date(results.userinfo_created_at_i * 1000).getTime()) / 1000 / 86400)
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
@@ -168,7 +170,7 @@ exports.getdetails = function(req, res)
 		//console.log(results);
 
 		res.render('user_getdetails', {
-			title: results.author,
+			title: results.author + " - hnuser",
 			data: results
 		});
 	});
