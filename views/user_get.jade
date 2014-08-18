@@ -1,6 +1,24 @@
 extends layout
 
 block content
+
+  form(id="showinfo")
+     Enter Hacker News username:&nbsp;
+     input(id="username",type="text")
+     input(type="submit",value="Go")
+
+  script.
+    function evtSubmit(e) {
+      // code
+      e.preventDefault();
+      window.location.href = "/user/" + document.getElementById("username").value;
+    };
+
+    var showInfoForm = document.getElementById("showinfo");
+    if (showInfoForm.addEventListener) {
+      showInfoForm.addEventListener('submit', evtSubmit, false);
+    }
+
   h1= author
 
   a(href="https://github.com/jaredsohn/hnuserweb")

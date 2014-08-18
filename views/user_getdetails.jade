@@ -40,6 +40,7 @@ block content
   script(src="/lib/nv.d3.min.js")
 
   script.
+
     createPieChart = function(id, labels, values)
     {
       if (labels.length !== values.length)
@@ -224,6 +225,25 @@ block content
       ];
     }  
 
+    line_chart_on_click = function(e)
+    {
+      var popup = document.getElementsByTagName("thead")[0];
+      if (typeof(popup) !== "undefined")
+      {
+        var date_str = Date.parse(popup.getElementsByClassName("x-value")[0].innerHTML);
+
+        var start_date = new Date(date_str).setHours(0,0,0);
+        var end_date   = new Date(date_str).setHours(23,59,59);
+
+        var start_timestamp_i = start_date / 1000;
+        var end_timestamp_i = end_date / 1000;
+
+        // TODO: make api requests and show results in ui somewhere
+        //window.open("https://hn.algolia.com/api/v1/search_by_date?tags=author_" + data.author + "&hitsPerPage=1000&numericFilters=created_at_i%3c" + end_timestamp_i + "&numericFilters=created_at_i%3e" + start_timestamp_i);
+
+        window.open("https://hn.algolia.com/#!/all/forever/prefix/0/author%3A" + data.author + "%20date%3c" + end_timestamp_i + "%20date%3e" + start_timestamp_i);
+      }
+    };
 
     createPieChart("chart1", ["# stories", "# comments"], [data.story_count, data.comment_count]);
     createPieChart("chart2", ["story karma", "comment karma", "Unknown (deleted/missing/lag/?)"], [data.story_karma, data.comment_karma, data.unknown_karma]);
@@ -233,4 +253,9 @@ block content
     createLineChart("chart6", ["time", "ave karma/story"], get_story_karma_ave_series());
     createLineChart("chart7", ["time", "comment karma percentage"], get_comment_karma_percentage_series());
 
+    document.getElementById("chart3").addEventListener("click", line_chart_on_click);
+    document.getElementById("chart4").addEventListener("click", line_chart_on_click);
+    document.getElementById("chart5").addEventListener("click", line_chart_on_click);
+    document.getElementById("chart6").addEventListener("click", line_chart_on_click);
+    document.getElementById("chart7").addEventListener("click", line_chart_on_click);
 

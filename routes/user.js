@@ -162,10 +162,19 @@ exports.getdetails = function(req, res)
 			return;
 		}
 		results.hits = [];
-		results.userinfo_about = results.userinfo_about.replace(/\\n/g, '\n');
-		results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;
-		results.userinfo_days_ago = Math.floor((new Date().getTime() - new Date(results.userinfo_created_at_i * 1000).getTime()) / 1000 / 86400)
+		if (typeof(results.userinfo_about) !== 'undefined')
+		{
+			results.userinfo_about = results.userinfo_about.replace(/\\n/g, '\n');
+			results.userinfo_avg_rounded =  Math.round(results.userinfo_avg * 100) / 100;
+			results.userinfo_days_ago = Math.floor((new Date().getTime() - new Date(results.userinfo_created_at_i * 1000).getTime()) / 1000 / 86400)
+		} else
+		{
+			results.userinfo_about = "";
+			results.userinfo_avg_rounded = "";
+			results.userinfo_days_ago = "";
+		}
 		results.comment_karma_percent = (results.comment_karma / (results.comment_karma + results.story_karma) * 100).toFixed() + "%";
+
 
 		//console.log(results);
 
